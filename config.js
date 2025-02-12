@@ -1,20 +1,21 @@
+import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 
 dotenv.config();
 
-const port = process.env.PORT || 5000;
-const mongodb_uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/DMPTest';
-
-mongoose.connect(mongodb_uri);
-
-const connection = mongoose.connection;
-
-connection.once('open', () => {
-    console.log('Success!!');
-});
+const sequelize = new Sequelize(
+    process.env.POSTGRES_DB,
+    process.env.POSTGRES_USERNAME,
+    process.env.POSTGRES_PASSWORD,
+    {
+        host: process.env.POSTGRES_HOST,
+        port: process.env.POSTGRES_PORT,
+        dialect: 'postgres',
+        logging: false,
+    }
+);
 
 export default {
-    port,
-    mongodb_uri,
+    sequelize,
+    port: process.env.PORT || 5000,
 };

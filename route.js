@@ -1,9 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 
-import { getUser, loginUser, logoutUser } from './controllers/AuthController.js';
-import { getAllJob, getJobById } from './controllers/JobController.js';
-import { getAllUser, getUserById, saveUser } from './controllers/UserController.js';
+import { getUser, loginUser, logoutUser, registerUser } from './controllers/AuthController.js';
 
 import { authenticateToken } from './middleware/authMiddleware.js';
 
@@ -20,14 +18,6 @@ router.get('/', (req, res) => {
   res.send('Test!');
 });
 
-// UserController
-router.route('/user')
-  .get(getAllUser)
-  .post(saveUser);
-
-router.route('/user/:id')
-  .get(getUserById);
-
 // AuthController
 router.route('/user/login')
   .post(loginUser);
@@ -38,11 +28,7 @@ router.route('/user-data')
 router.route('/user/logout')
   .post(logoutUser);
 
-// JobController
-router.route('/api/jobs')
-  .get(authenticateToken, getAllJob);
-
-router.route('/api/jobs/:id')
-  .get(authenticateToken, getJobById);
+router.route('/user/register')
+  .post(registerUser);
 
 export default router;
