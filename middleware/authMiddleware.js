@@ -16,7 +16,18 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+const isManager = (req, res, next) => {
+    const { role } = req.user;
+    console.log(role);
+    if (role === 'MANAGER') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Not a Manager' });
+    }
+}
+
 export {
-    authenticateToken
+    authenticateToken,
+    isManager
 };
 

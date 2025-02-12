@@ -1,6 +1,6 @@
 import Training from '../models/Training.js';
 
-export const getTrainings = async (req, res) => {
+const getTrainings = async (req, res) => {
     try {
         const trainings = await Training.findAll();
         res.status(200).json(trainings);
@@ -9,7 +9,7 @@ export const getTrainings = async (req, res) => {
     }
 };
 
-export const getTraining = async (req, res) => {
+const getTraining = async (req, res) => {
     try {
         const { id } = req.params;
         const training = await Training.findByPk(id);
@@ -19,7 +19,7 @@ export const getTraining = async (req, res) => {
     }
 }
 
-export const createTraining = async (req, res) => {
+const createTraining = async (req, res) => {
     try {
         const { id } = req.user;
         const { title, description, provider, start_date, end_date } = req.body;
@@ -38,11 +38,4 @@ export const createTraining = async (req, res) => {
     }
 }
 
-export const isManager = (req, res, next) => {
-    const { role } = req.user;
-    if (role ==='MANAGER') {
-        next();
-    } else {
-        res.status(403).json({ message: 'Forbidden' });
-    }
-}
+export { getTrainings, getTraining, createTraining }
