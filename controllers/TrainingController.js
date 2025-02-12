@@ -1,11 +1,31 @@
 import Training from '../models/Training.js';
+import { Op } from 'sequelize';
 
 const getTrainings = async (req, res) => {
     try {
-        const trainings = await Training.findAll();
-        res.status(200).json(trainings);
+        const { page = 1, limit = 10, filter = '', startDate } = req.query;
+        const offset = (page - 1) * limit;
+
+        const whereClause = {
+            ...(filter && { title: { [Op.like]: `%${filter}%` } }),
+            ...(startDate && { start_date: { [Op.gte]: new Date(startDate) } })
+        };
+
+        const trainings = await Training.findAndCountAll({
+            where: whereClause,
+            limit: parseInt(limit),
+            offset: parseInt(offset)
+        });
+
+        res.status(200).json({
+            totalItems: trainings.count,
+            totalPages: Math.ceil(trainings.count / limit),
+            currentPage: parseInt(page),
+            data: trainings.rows
+        });
     } catch (e) {
-        res.status(500).json({ message: e.message });
+        console.error(e);
+        res.status(500).json({ message: 'An error occurred while fetching trainings.' });
     }
 };
 
@@ -13,9 +33,13 @@ const getTraining = async (req, res) => {
     try {
         const { id } = req.params;
         const training = await Training.findByPk(id);
+        if (!training) {
+            return res.status(404).json({ message: 'Training not found.' });
+        }
         res.status(200).json(training);
     } catch (e) {
-        res.status(500).json({ message: e.message });
+        console.error(e);
+        res.status(500).json({ message: 'An error occurred while fetching the training.' });
     }
 }
 
@@ -34,8 +58,54 @@ const createTraining = async (req, res) => {
         });
         res.status(201).json(training);
     } catch (e) {
-        res.status(500).json({ message: e.message });
+        console.error(e);
+        res.status(500).json({ message: 'An error occurred while creating the training.' });
     }
 }
 
-export { getTrainings, getTraining, createTraining }
+const updateTraining = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description, provider, start_date, end_date } = req.body;
+
+        if (!title || !description || !provider || !start_date || !end_date) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        // Find the training by ID
+        const training = await Training.findByPk(id);
+        if (!training) {
+            return res.status(404).json({ message: 'Training not found.' });
+        }
+
+        training.title = title;
+        training.description = description;
+        training.provider = provider;
+        training.start_date = new Date(start_date);
+        training.end_date = new Date(end_date);
+
+        await training.save();
+
+        res.status(200).json({ data: training });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'An error occurred while updating the training.' });
+    }
+};
+
+const deleteTraining = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const training = await Training.findByPk(id);
+        if (!training) {
+            return res.status(404).json({ message: 'Training not found.' });
+        }
+        await training.destroy();
+        res.status(200).json({ message: 'Training deleted successfully.' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ message: 'An error occurred while deleting the training.' });
+    }
+};
+
+export { getTrainings, getTraining, createTraining, updateTraining, deleteTraining };
