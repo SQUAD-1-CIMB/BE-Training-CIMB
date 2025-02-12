@@ -1,7 +1,7 @@
 {
   "name": "getjob",
   "version": "1.0.0",
-  "description": "This is a test project from Dans Multi Pro.",
+  "description": "This is an app for Training in CIMB Niaga.",
   "main": "index.js",
   "type": "module",
   "scripts": {

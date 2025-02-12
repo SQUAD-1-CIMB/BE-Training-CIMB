@@ -4,6 +4,7 @@ import express from 'express';
 import { getUser, loginUser, logoutUser, registerUser } from './controllers/AuthController.js';
 
 import { authenticateToken } from './middleware/authMiddleware.js';
+import { createTraining, getTraining, getTrainings, isManager } from './controllers/TrainingController.js';
 
 const router = express.Router();
 
@@ -31,5 +32,13 @@ router.route('/user/logout')
 
 router.route('/user/register')
   .post(registerUser);
+
+// TrainingController
+router.route('/trainings')
+  .get(authenticateToken, getTrainings)
+  .post(authenticateToken, createTraining);
+
+router.route('/training/:id')
+  .get(authenticateToken, getTraining);
 
 export default router;
