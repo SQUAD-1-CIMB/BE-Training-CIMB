@@ -61,15 +61,29 @@ const withdrawApplication = async (req, res) => {
 const getMyApplications = async (req, res) => {
     try {
         const { id: employee_id } = req.user;
+        const { page = 1, limit = 10, status } = req.query;
+        const offset = (page - 1) * limit;
 
-        const applications = await TrainingApplication.findAll({
-            where: { employee_id },
+        const whereClause = {
+            employee_id,
+            ...(status && { status })
+        };
+
+        const applications = await TrainingApplication.findAndCountAll({
+            where: whereClause,
+            limit: parseInt(limit),
+            offset: parseInt(offset),
             include: [
                 { model: Training },
             ]
         });
 
-        res.status(200).json(applications);
+        res.status(200).json({
+            totalItems: applications.count,
+            totalPages: Math.ceil(applications.count / limit),
+            currentPage: parseInt(page),
+            data: applications.rows
+        });
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'An error occurred while fetching your applications.' });
@@ -91,8 +105,8 @@ const acceptApplication = async (req, res) => {
         }
 
         application.status = 'APPROVED';
-        application.manager_id = manager_id;
-        application.approval_date = new Date();
+        application.modified_by = manager_id;
+        application.updated_at = new Date();
         await application.save();
 
         res.status(200).json(application);
@@ -109,7 +123,12 @@ const rejectApplication = async (req, res) => {
         const { rejection_reason } = req.body;
 
         const application = await TrainingApplication.findOne({
-            where: { id, status: 'PENDING' }
+            where: { 
+                id: id, 
+                status: {
+                    [Op.in]: ['PENDING', 'APPROVED']
+                } 
+            }
         });
 
         if (!application) {
@@ -117,9 +136,9 @@ const rejectApplication = async (req, res) => {
         }
 
         application.status = 'REJECTED';
-        application.manager_id = manager_id;
+        application.modified_by = manager_id;
         application.rejection_reason = rejection_reason;
-        application.approval_date = new Date();
+        application.updated_at = new Date();
         await application.save();
 
         res.status(200).json(application);

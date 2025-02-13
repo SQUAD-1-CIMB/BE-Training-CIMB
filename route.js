@@ -40,9 +40,9 @@ router.route('/trainings')
   .get(authenticateToken, isManager, getTrainings)
   .post(authenticateToken, isManager, upload.single('thumbnail'), createTraining);
 
-router.route('/training/:id')
+router.route('/trainings/:id')
   .get(authenticateToken, getTraining)
-  .put(authenticateToken, isManager, updateTraining)
+  .put(authenticateToken, isManager, upload.single('thumbnail'), updateTraining)
   .delete(authenticateToken, isManager, deleteTraining);
 
 // TrainingApplicationController

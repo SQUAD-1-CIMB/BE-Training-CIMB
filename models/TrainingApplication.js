@@ -38,14 +38,14 @@ const TrainingApplication = sequelize.define('TrainingApplication', {
             isIn: [['PENDING', 'APPROVED', 'REJECTED']],
         },
     },
-    manager_id: {
+    modified_by: {
         type: DataTypes.INTEGER,
         references: {
             model: Employee,
             key: 'id',
         },
     },
-    approval_date: {
+    updated_at: {
         type: DataTypes.DATE,
     },
     rejection_reason: {
@@ -58,6 +58,6 @@ const TrainingApplication = sequelize.define('TrainingApplication', {
 
 TrainingApplication.belongsTo(Employee, { foreignKey: 'employee_id' });
 TrainingApplication.belongsTo(Training, { foreignKey: 'training_id' });
-TrainingApplication.belongsTo(Employee, { foreignKey: 'manager_id', as: 'manager' });
+TrainingApplication.belongsTo(Employee, { foreignKey: 'modified_by', as: 'manager' });
 
 export default TrainingApplication;
