@@ -18,7 +18,6 @@ const authenticateToken = (req, res, next) => {
 
 const isManager = (req, res, next) => {
     const { role } = req.user;
-    console.log(role);
     if (role === 'MANAGER') {
         next();
     } else {

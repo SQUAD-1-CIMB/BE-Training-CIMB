@@ -7,7 +7,7 @@ const getTrainings = async (req, res) => {
         const offset = (page - 1) * limit;
 
         const whereClause = {
-            ...(filter && { title: { [Op.like]: `%${filter}%` } }),
+            ...(filter && { title: { [Op.iLike]: `%${filter}%` } }),
             ...(startDate && { start_date: { [Op.gte]: new Date(startDate) } })
         };
 
@@ -57,7 +57,7 @@ const createTraining = async (req, res) => {
             start_date,
             end_date,
             created_by: id,
-            // thumbnail,
+            thumbnail,
         });
         res.status(201).json(training);
     } catch (e) {
@@ -70,7 +70,7 @@ const updateTraining = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, description, provider, start_date, end_date } = req.body;
-
+        console.log(req.body);
         if (!title || !description || !provider || !start_date || !end_date) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
@@ -81,11 +81,14 @@ const updateTraining = async (req, res) => {
             return res.status(404).json({ message: 'Training not found.' });
         }
 
+        const thumbnail = req.file ? req.file.path : training.thumbnail;
+        console.log(req.file);
         training.title = title;
         training.description = description;
         training.provider = provider;
         training.start_date = new Date(start_date);
         training.end_date = new Date(end_date);
+        training.thumbnail = thumbnail;
 
         await training.save();
 
