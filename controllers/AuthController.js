@@ -28,8 +28,18 @@ const loginUser = async (req, res) => {
                             const threeHours = 48 * 60 * 60 * 1000;
                             const expirationDate = new Date(Date.now() + threeHours);
 
+                            const userWithoutPassword = {
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                                department: user.department,
+                                role: user.role,
+                                created_at: user.created_at,
+                                avatar: user.avatar
+                            };
+
                             res.cookie('token', token, { expires: expirationDate, httpOnly: true })
-                               .json({ token, user });
+                               .json({ token, user: userWithoutPassword });
                         }
                     }
                 );
@@ -42,7 +52,7 @@ const loginUser = async (req, res) => {
     } catch (e) {
         res.status(500).json({ message: e.message });
     }
-}
+};
 
 const getUser = (req, res) => {
     const { token } = req.cookies;
@@ -75,6 +85,8 @@ const logoutUser = (req, res) => {
         }).json({ message: 'Logout successfully.' });
 };
 
+const DEFAULT_AVATAR_URL = "https://res.cloudinary.com/dm03tiklu/image/upload/v1739442632/training_thumbnails/mvcvwudtnzkdet0ngsvr.jpg"
+
 const registerUser = async (req, res) => {
     try {
         const { email, password, name, department } = req.body;
@@ -90,7 +102,8 @@ const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             name,
-            department
+            department,
+            avatar: DEFAULT_AVATAR_URL
         });
 
         res.status(201).json({

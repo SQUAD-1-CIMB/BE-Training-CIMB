@@ -36,6 +36,9 @@ const Employee = sequelize.define('Employee', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+    avatar: {
+        type: DataTypes.STRING,
+    },
 }, {
     tableName: 'employees',
     timestamps: false,
