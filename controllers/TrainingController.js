@@ -43,7 +43,7 @@ const getTraining = async (req, res) => {
     }
 }
 
-const DEFAULT_THUMBNAIL_URL = 'https://testdulu.com/default-thumbnail.jpg';
+const DEFAULT_THUMBNAIL_URL = 'https://res.cloudinary.com/dm03tiklu/image/upload/v1739437994/training_thumbnails/pqlit6sbfnumj1wyhawj.jpg';
 
 const createTraining = async (req, res) => {
     try {
