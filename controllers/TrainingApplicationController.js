@@ -13,7 +13,14 @@ const applyTraining = async (req, res) => {
         });
 
         if (existingApplication) {
-            return res.status(400).json({ message: 'You have already applied for this training.' });
+            if (existingApplication.status === 'WITHDRAWN') {
+                existingApplication.status = 'PENDING';
+                existingApplication.application_date = new Date();
+                await existingApplication.save();
+                return res.status(200).json(existingApplication);
+            } else {
+                return res.status(400).json({ message: 'You have already applied for this training.' });
+            }
         }
 
         const application = await TrainingApplication.create({
