@@ -37,7 +37,7 @@ router.route('/user/register')
 
 // TrainingController
 router.route('/trainings')
-  .get(authenticateToken, isManager, getTrainings)
+  .get(authenticateToken, getTrainings)
   .post(authenticateToken, isManager, upload.single('thumbnail'), createTraining);
 
 router.route('/trainings/:id')
