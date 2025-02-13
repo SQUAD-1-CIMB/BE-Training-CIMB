@@ -64,7 +64,7 @@ const getTrainings = async (req, res) => {
 
         const data = trainings.rows.map(training => {
             const status = applicationMap[training.id];
-            const isAbleToApply = !status || (status !== 'PENDING' && status !== 'APPROVED' && status !== 'REJECTED' && status !== 'WITHDRAWN');
+            const isAbleToApply = !status || (status !== 'PENDING' && status !== 'APPROVED' && status !== 'REJECTED');
             return {
                 ...training.toJSON(),
                 isAbleToApply
