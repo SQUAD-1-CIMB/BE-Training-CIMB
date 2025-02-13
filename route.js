@@ -2,10 +2,10 @@ import cors from 'cors';
 import express from 'express';
 
 import { getUser, loginUser, logoutUser, registerUser } from './controllers/AuthController.js';
-import { createTraining, deleteTraining, getTraining, getTrainings, updateTraining } from './controllers/TrainingController.js';
-import { getUsers, getUserById, promoteToManager, demoteToEmployee } from './controllers/UserController.js';
-import { authenticateToken, isManager } from './middleware/authMiddleware.js';
 import { acceptApplication, applyTraining, getApplications, getMyApplications, rejectApplication, withdrawApplication } from './controllers/TrainingApplicationController.js';
+import { createTraining, deleteTraining, getTraining, getTrainings, updateTraining } from './controllers/TrainingController.js';
+import { demoteToEmployee, getUserById, getUsers, promoteToManager } from './controllers/UserController.js';
+import { authenticateToken, isManager } from './middleware/authMiddleware.js';
 import upload from './middleware/uploadMiddleware.js';
 
 const router = express.Router();
@@ -47,22 +47,20 @@ router.route('/training/:id')
 
 // TrainingApplicationController
 router.route('/training-application')
-    .post(authenticateToken, applyTraining)
-    .get(authenticateToken, isManager, getApplications);
+  .post(authenticateToken, applyTraining)
+  .get(authenticateToken, isManager, getApplications);
 
 router.route('/training-application/:id/withdraw')
-    .patch(authenticateToken, withdrawApplication);
+  .patch(authenticateToken, withdrawApplication);
 
 router.route('/my-applications')
-    .get(authenticateToken, getMyApplications);
+  .get(authenticateToken, getMyApplications);
 
 router.route('/training-application/:id/accept')
-    .patch(authenticateToken, isManager, acceptApplication);
+  .patch(authenticateToken, isManager, acceptApplication);
 
 router.route('/training-application/:id/reject')
-    .patch(authenticateToken, isManager, rejectApplication);
-
-
+  .patch(authenticateToken, isManager, rejectApplication);
 
   // UserController
 router.route('/users')

@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
                         if (err) {
                             res.status(500).json({ message: 'Failed to generate token.' });
                         } else {
-                            const threeHours = 3 * 60 * 60 * 1000;
+                            const threeHours = 48 * 60 * 60 * 1000;
                             const expirationDate = new Date(Date.now() + threeHours);
 
                             res.cookie('token', token, { expires: expirationDate, httpOnly: true })
@@ -34,10 +34,10 @@ const loginUser = async (req, res) => {
                     }
                 );
             } else {
-                res.json('Invalid credentials!');
+                res.status(400).json('Invalid credentials!');
             }
         } else {
-            res.json('Invalid credentials!');
+            res.status(400).json('Invalid credentials!');
         }
     } catch (e) {
         res.status(500).json({ message: e.message });
