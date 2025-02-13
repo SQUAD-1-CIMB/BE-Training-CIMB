@@ -1,8 +1,38 @@
 import Training from '../models/Training.js';
 import { Op } from 'sequelize';
+import TrainingApplication from '../models/TrainingApplication.js';
+
+// const getTrainings = async (req, res) => {
+//     try {
+//         const { page = 1, limit = 10, filter = '', startDate } = req.query;
+//         const offset = (page - 1) * limit;
+
+//         const whereClause = {
+//             ...(filter && { title: { [Op.iLike]: `%${filter}%` } }),
+//             ...(startDate && { start_date: { [Op.gte]: new Date(startDate) } })
+//         };
+
+//         const trainings = await Training.findAndCountAll({
+//             where: whereClause,
+//             limit: parseInt(limit),
+//             offset: parseInt(offset)
+//         });
+
+//         res.status(200).json({
+//             totalItems: trainings.count,
+//             totalPages: Math.ceil(trainings.count / limit),
+//             currentPage: parseInt(page),
+//             data: trainings.rows
+//         });
+//     } catch (e) {
+//         console.error(e);
+//         res.status(500).json({ message: 'An error occurred while fetching trainings.' });
+//     }
+// };
 
 const getTrainings = async (req, res) => {
     try {
+        const { id: employee_id } = req.user;
         const { page = 1, limit = 10, filter = '', startDate } = req.query;
         const offset = (page - 1) * limit;
 
@@ -17,11 +47,35 @@ const getTrainings = async (req, res) => {
             offset: parseInt(offset)
         });
 
+        const trainingIds = trainings.rows.map(training => training.id);
+
+        const applications = await TrainingApplication.findAll({
+            where: {
+                training_id: { [Op.in]: trainingIds },
+                employee_id
+            },
+            attributes: ['training_id', 'status']
+        });
+
+        const applicationMap = applications.reduce((map, application) => {
+            map[application.training_id] = application.status;
+            return map;
+        }, {});
+
+        const data = trainings.rows.map(training => {
+            const status = applicationMap[training.id];
+            const isAbleToApply = !status || (status !== 'PENDING' && status !== 'APPROVED' && status !== 'REJECTED' && status !== 'WITHDRAWN');
+            return {
+                ...training.toJSON(),
+                isAbleToApply
+            };
+        });
+
         res.status(200).json({
             totalItems: trainings.count,
             totalPages: Math.ceil(trainings.count / limit),
             currentPage: parseInt(page),
-            data: trainings.rows
+            data
         });
     } catch (e) {
         console.error(e);
