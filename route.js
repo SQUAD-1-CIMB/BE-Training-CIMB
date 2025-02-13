@@ -2,8 +2,8 @@ import cors from 'cors';
 import express from 'express';
 
 import { getUser, loginUser, logoutUser, registerUser } from './controllers/AuthController.js';
-
 import { createTraining, deleteTraining, getTraining, getTrainings, updateTraining } from './controllers/TrainingController.js';
+import { getUsers, getUserById, promoteToManager, demoteToEmployee } from './controllers/UserController.js';
 import { authenticateToken, isManager } from './middleware/authMiddleware.js';
 import { acceptApplication, applyTraining, getApplications, getMyApplications, rejectApplication, withdrawApplication } from './controllers/TrainingApplicationController.js';
 import upload from './middleware/uploadMiddleware.js';
@@ -63,5 +63,18 @@ router.route('/training-application/:id/reject')
     .patch(authenticateToken, isManager, rejectApplication);
 
 
+
+  // UserController
+router.route('/users')
+  .get(authenticateToken, getUsers);
+
+router.route('/users/:id')
+  .get(authenticateToken, getUserById);
+
+router.route('/users/:id/promote')
+  .put(authenticateToken, isManager, promoteToManager);
+
+router.route('/users/:id/demote')
+  .put(authenticateToken, isManager, demoteToEmployee);
 
 export default router;

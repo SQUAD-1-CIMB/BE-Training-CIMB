@@ -36,6 +36,10 @@ const Training = sequelize.define('Training', {
             key: 'id',
         },
     },
+    thumbnail: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
