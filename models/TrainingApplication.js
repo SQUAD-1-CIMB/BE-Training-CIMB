@@ -35,7 +35,7 @@ const TrainingApplication = sequelize.define('TrainingApplication', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isIn: [['PENDING', 'APPROVED', 'REJECTED']],
+            isIn: [['PENDING', 'APPROVED', 'REJECTED', 'WITHDRAWN']],
         },
     },
     modified_by: {
