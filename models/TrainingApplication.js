@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import config from '../config.js';
-import Employee from './Employee';
-import Training from './Training';
+import Employee from './Employee.js';
+import Training from './Training.js';
 
 const { sequelize } = config;
 

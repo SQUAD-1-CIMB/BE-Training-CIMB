@@ -6,6 +6,7 @@ import { getUser, loginUser, logoutUser, registerUser } from './controllers/Auth
 import { createTraining, deleteTraining, getTraining, getTrainings, updateTraining } from './controllers/TrainingController.js';
 import { authenticateToken, isManager } from './middleware/authMiddleware.js';
 import { acceptApplication, applyTraining, getApplications, getMyApplications, rejectApplication, withdrawApplication } from './controllers/TrainingApplicationController.js';
+import upload from './middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ router.route('/user/register')
 // TrainingController
 router.route('/trainings')
   .get(authenticateToken, isManager, getTrainings)
-  .post(authenticateToken, isManager, createTraining);
+  .post(authenticateToken, isManager, upload.single('thumbnail'), createTraining);
 
 router.route('/training/:id')
   .get(authenticateToken, getTraining)

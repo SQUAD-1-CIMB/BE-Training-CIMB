@@ -43,11 +43,13 @@ const getTraining = async (req, res) => {
     }
 }
 
+const DEFAULT_THUMBNAIL_URL = 'https://testdulu.com/default-thumbnail.jpg';
+
 const createTraining = async (req, res) => {
     try {
         const { id } = req.user;
         const { title, description, provider, start_date, end_date } = req.body;
-
+        const thumbnail = req.file ? req.file.path : DEFAULT_THUMBNAIL_URL;
         const training = await Training.create({
             title,
             description,
@@ -55,13 +57,14 @@ const createTraining = async (req, res) => {
             start_date,
             end_date,
             created_by: id,
+            // thumbnail,
         });
         res.status(201).json(training);
     } catch (e) {
         console.error(e);
         res.status(500).json({ message: 'An error occurred while creating the training.' });
     }
-}
+};
 
 const updateTraining = async (req, res) => {
     try {

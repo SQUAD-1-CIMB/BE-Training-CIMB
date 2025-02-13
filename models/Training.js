@@ -40,6 +40,9 @@ const Training = sequelize.define('Training', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+    // thumbnail: {
+    //     type: DataTypes.STRING,
+    // },
 }, {
     tableName: 'trainings',
     timestamps: false,
