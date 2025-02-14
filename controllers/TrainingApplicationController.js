@@ -170,7 +170,8 @@ const getApplications = async (req, res) => {
             offset: parseInt(offset),
             include: [
                 { model: Training },
-                { model: Employee, as: 'manager' }
+                { model: Employee, as: 'manager' },
+                { model: Employee, as: 'applicant' }
             ]
         });
 

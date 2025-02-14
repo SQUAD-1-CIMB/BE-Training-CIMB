@@ -56,7 +56,7 @@ const TrainingApplication = sequelize.define('TrainingApplication', {
     timestamps: false,
 });
 
-TrainingApplication.belongsTo(Employee, { foreignKey: 'employee_id' });
+TrainingApplication.belongsTo(Employee, { foreignKey: 'employee_id', as: 'applicant' });
 TrainingApplication.belongsTo(Training, { foreignKey: 'training_id' });
 TrainingApplication.belongsTo(Employee, { foreignKey: 'modified_by', as: 'manager' });
 
